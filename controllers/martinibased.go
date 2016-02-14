@@ -12,7 +12,6 @@ import (
 	//"github.com/codegansta/martini"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	"github.com/russross/blackfriday"
 )
 
 // inject render defined in render.Renderer
@@ -43,7 +42,7 @@ func savePostHandler1(ren render.Render, r *http.Request) {
 	id := r.FormValue("id")
 	title := r.FormValue("title")
 	contentMarkdown := r.FormValue("content")
-	contentHtml := string(blackfriday.MarkdownBasic([]byte(contentMarkdown)))
+	contentHtml := utils.ConvertMarkdownToHtml(contentMarkdown)
 
 	var post *models.PostMD
 
@@ -74,9 +73,9 @@ func deleteHandler1(ren render.Render, r *http.Request, params martini.Params) {
 
 func getHtmlHandler(ren render.Render, r *http.Request) {
 	md := r.FormValue("md")
-	htmlBytes := blackfriday.MarkdownBasic([]byte(md))
+	html := utils.ConvertMarkdownToHtml(md)
 
-	ren.JSON(200, map[string]interface{}{"html": string(htmlBytes)})
+	ren.JSON(200, map[string]interface{}{"html": html})
 }
 
 func unescape(s string) interface{} {
@@ -84,7 +83,6 @@ func unescape(s string) interface{} {
 }
 
 func RunWithMartini2() {
-
 	// martini package
 	m := martini.Classic()
 
